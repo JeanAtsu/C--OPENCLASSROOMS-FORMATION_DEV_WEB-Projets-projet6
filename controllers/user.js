@@ -78,7 +78,7 @@ exports.deleteUser = (req, res, next) => {
 
 //Get all users
 exports.getAllUser = (req, res, next) => {
-    Sauce.find().then(
+    User.find().then(
     (users) => {
       res.status(200).json(users);
     }
