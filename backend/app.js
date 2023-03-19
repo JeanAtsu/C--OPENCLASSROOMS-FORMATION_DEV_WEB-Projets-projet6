@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 
 const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
+const path = require('path');
 
 const app = express();   
 
@@ -24,5 +25,6 @@ mongoose.connect('mongodb+srv://JeanAtsu:Oss117_01234@jeanatsu.ccc0yk8.mongodb.n
 app.use(express.json()); //Pour exposer le body des requêtes
 app.use('/api/sauce', sauceRoutes);
 app.use('/api/auth', userRoutes);
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 module.exports = app;
