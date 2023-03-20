@@ -6,6 +6,15 @@ const userRoutes = require("./routes/user");
 const path = require('path');
 
 const app = express();   
+app.use(express.json()); //Pour exposer le body des requêtes
+
+
+//database
+mongoose.connect('mongodb+srv://JeanAtsu:Oss117_01234@jeanatsu.ccc0yk8.mongodb.net/?retryWrites=true&w=majority',
+{ useNewUrlParser: true,
+  useUnifiedTopology: true })
+.then(() => console.log('Connexion à MongoDB réussie !'))
+.catch(() => console.log('Connexion à MongoDB échouée !')); 
 
 //CORS (Cross origin)
 app.use((req, res, next) => {
@@ -15,16 +24,9 @@ app.use((req, res, next) => {
     next();
   });
 
-  //database
-mongoose.connect('mongodb+srv://JeanAtsu:Oss117_01234@jeanatsu.ccc0yk8.mongodb.net/?retryWrites=true&w=majority',
-{ useNewUrlParser: true,
-  useUnifiedTopology: true })
-.then(() => console.log('Connexion à MongoDB réussie !'))
-.catch(() => console.log('Connexion à MongoDB échouée !')); 
 
-app.use(express.json()); //Pour exposer le body des requêtes
-app.use('/api/sauce', sauceRoutes);
 app.use('/api/auth', userRoutes);
+app.use('/api/sauce', sauceRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 module.exports = app;
