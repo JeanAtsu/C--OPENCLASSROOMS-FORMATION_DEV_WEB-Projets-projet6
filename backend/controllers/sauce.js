@@ -13,7 +13,7 @@ exports.createSauce = (req, res, next) => {
       userId: req.auth.userId,
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   });
-
+  console.log(sauce);
   sauce.save()
   .then(() => { res.status(201).json({message: 'Objet enregistré !'})})
   .catch(error => { res.status(400).json( { error })})
@@ -59,7 +59,6 @@ exports.modifySauce = (req, res, next) => {
       });
 };
 
-
 //Delete sauce
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id})
@@ -94,3 +93,27 @@ exports.getAllSauce = (req, res, next) => {
     }
   );
 };
+
+//Like sauce
+exports.likeSauce = (req, res, next) => {
+
+   let userId = req.params._userId;
+   let id = req.params.id;
+    Sauce.findOne({_id: req.params.id})
+    .then((sauce) => {
+        if (sauce.userId === req.params._userId) 
+        {
+            res.status(401).json({ message : 'Not authorized'});
+        } 
+        else 
+        {  
+            Sauce.updateOne({_id : req.params.id}, {likes : sauce.likes +1, usersLiked : sauce.usersLiked.push(req.params._userId)})
+            .then(() => res.status(200).json({message : 'Liké!'}))
+            .catch(error => res.status(401).json({ error }));    
+        }
+    })
+    .catch((error) => {
+        res.status(400).json({ error });
+    });
+};
+
