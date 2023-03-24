@@ -12,6 +12,23 @@ exports.signup = (req, res, next) => {
         email: req.body.email,
         password: hash
       });
+
+    function checkUserData(user)
+    {
+        const regexEmail = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
+
+        let ret = true;
+        
+        //email
+        if (!regexEmail.test(user.email))
+        {
+            ret = false;
+        }
+
+        return ret;
+    }
+
+    if (checkUserData())
       user.save()
         .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
         .catch(error => res.status(400).json({ error }));
