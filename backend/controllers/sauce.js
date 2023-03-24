@@ -105,15 +105,19 @@ exports.like = (req, res, next) => {
         } 
         else 
         {        
-            if (sauce.likes == 0)
+            if (req.body.like === 1)
             { 
-              Sauce.updateOne({_id : req.params.id}, {likes : sauce.likes + 1}, {usersLiked : sauce.usersLiked.push(req.params._userId)})
+              Sauce.updateOne({_id : req.params.id}, {likes : sauce.likes + 1}, 
+              {usersLiked : sauce.usersLiked.push(req.params._userId)})
+                         
               .then(() => res.status(200).json({message : 'Liked'}))
               .catch(error => res.status(401).json({ error }));   
             }
-            else 
+            if (req.body.like === -1)
             { 
-              Sauce.updateOne({_id : req.params.id}, {dislikes : sauce.dislikes + 1}, {usersDisliked : sauce.usersDisliked.push(req.params._userId)})
+              Sauce.updateOne({_id : req.params.id}, {dislikes : sauce.dislikes + 1},
+                {usersDisliked: sauce.usersDisliked.push(req.params._userId)})
+              
               .then(() => res.status(200).json({message : 'Disliked'}))
               .catch(error => res.status(401).json({ error }));   
             }
