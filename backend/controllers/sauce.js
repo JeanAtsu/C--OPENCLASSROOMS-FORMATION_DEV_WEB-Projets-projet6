@@ -121,6 +121,15 @@ exports.like = (req, res, next) => {
               .then(() => res.status(200).json({message : 'Disliked'}))
               .catch(error => res.status(401).json({ error }));   
             }
+            if (req.body.like === 0)
+            { 
+              Sauce.updateOne({_id : req.params.id}, 
+                {likes : sauce.likes},{disLikes : sauce.disLikes})
+
+              .then(() => res.status(200).json({message : 'None'}))
+              .catch(error => res.status(401).json({ error }));   
+            }
+            
         }
     })
     .catch((error) => {
