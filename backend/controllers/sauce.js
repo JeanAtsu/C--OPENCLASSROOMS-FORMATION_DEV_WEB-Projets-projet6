@@ -16,7 +16,7 @@ exports.createSauce = (req, res, next) => {
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   });
   
-  function checkSauceData(sauceObject)
+  function checkSauceData(sauce)
   {
       //const regexName = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
       //const regexManufacturer = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
@@ -41,7 +41,6 @@ exports.createSauce = (req, res, next) => {
           ret = false;
       }
       //MainPepper
-      //if (!regexMainPepper.test(sauce.MainPepper))
       if (!sauce.MainPepper.trim() == '')
       {
           ret = false;
@@ -86,7 +85,7 @@ exports.modifySauce = (req, res, next) => {
   Sauce.findOne({_id: req.params.id})
       .then((sauce) => {
 
-          function checkSauceData(sauceObject)
+          function checkSauceData(sauce)
           {
               
               //const regexName = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
@@ -124,7 +123,7 @@ exports.modifySauce = (req, res, next) => {
           if (sauce.userId != req.auth.userId) {
             res.status(401).json({ message : 'Not authorized'});
           } else {
-            if (checkSauceData(sauceObject) == true)
+            if (checkSauceData(sauce) == true)
             {
                 Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
                 .then(() => res.status(200).json({message : 'Objet modifié!'}))
