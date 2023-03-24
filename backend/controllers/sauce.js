@@ -25,7 +25,7 @@ exports.createSauce = (req, res, next) => {
 
       let ret = true;
     
-      //email
+      //Name
       if (sauce.Name.trim() == '')
       {
           ret = false;
@@ -54,6 +54,9 @@ exports.createSauce = (req, res, next) => {
       sauce.save()
       .then(() => { res.status(201).json({message: 'Objet enregistré !'})})
       .catch(error => { res.status(400).json( { error })})
+  }
+  else{
+    res.status(401).json({ message : 'Data format error !'});
   }
 };
 
@@ -95,7 +98,7 @@ exports.modifySauce = (req, res, next) => {
         
               let ret = true;
             
-              //email
+              //Name
               if (sauce.Name.trim() == '')
               {
                   ret = false;
@@ -128,6 +131,9 @@ exports.modifySauce = (req, res, next) => {
                 Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
                 .then(() => res.status(200).json({message : 'Objet modifié!'}))
                 .catch(error => res.status(401).json({ error }));
+            }
+            else{
+              res.status(401).json({ message : 'Data format error !'});
             }
           }           
       })
