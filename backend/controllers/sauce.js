@@ -48,15 +48,14 @@ exports.createSauce = (req, res, next) => {
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   });
   
-  
-  if (checkSauceData(sauce) == true)
+  if (checkSauceData(sauce))
   {
       sauce.save()
       .then(() => { res.status(201).json({message: 'Objet enregistré !'})})
       .catch(error => { res.status(400).json( { error })})
   }
   else{
-    res.status(401).json({ message : 'Data format error !'});
+    res.status(304).json({ message : 'Data format error !'});
   }
 };
 
@@ -91,14 +90,14 @@ exports.modifySauce = (req, res, next) => {
           if (sauce.userId != req.auth.userId) {
             res.status(401).json({ message : 'Not authorized'});
           } else {
-            if (checkSauceData(sauce) == true)
+            if (checkSauceData(sauce))
             {
                 Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
                 .then(() => res.status(200).json({message : 'Objet modifié!'}))
                 .catch(error => res.status(401).json({ error }));
             }
             else{
-              res.status(401).json({ message : 'Data format error !'});
+              res.status(304).json({ message : 'Data format error !'});
             }
           }           
       })
@@ -175,9 +174,10 @@ exports.like = (req, res, next) => {
 
               case 0:
                 // No like
-                Sauce.updateOne({_id : req.params.id}, 
+                Sauce.updateOne({_id : req.params.id},
                   {likes : sauce.likes -1},
-                  {disLikes : sauce.disLikes -1})
+                  {dislikes : sauce.dislikes -1}
+                 )
 
                 .then(() => res.status(200).json({message : 'No like'}))
                 .catch(error => res.status(401).json({ error }));   
