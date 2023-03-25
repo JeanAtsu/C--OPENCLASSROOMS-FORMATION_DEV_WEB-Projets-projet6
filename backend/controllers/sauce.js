@@ -1,9 +1,41 @@
 
 const Sauce = require('../models/Sauce');
 const fs = require('fs');
-const { userInfo } = require('os');
 
+function checkSauceData(sauce)
+{
+    //const regexName = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
+    //const regexManufacturer = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
+    //const regexDescription = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
+    //const regexMainPepper = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
 
+    let ret = true;
+  
+    /*
+    //Name
+    if (sauce.Name == "")
+    {
+        ret = false;
+    }
+    //Manufacturer
+    if (sauce.Manufacturer == "")
+    {
+        ret = false;
+    }
+    //Description
+    if (sauce.Description.length <= 5)
+    {
+        ret = false;
+    }
+    //MainPepper
+    if (sauce.MainPepper == "")
+    {
+        ret = false;
+    }
+    */
+    
+    return ret;
+}
 
 //Create sauce
 exports.createSauce = (req, res, next) => {
@@ -16,40 +48,8 @@ exports.createSauce = (req, res, next) => {
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   });
   
-  function checkSauceData(sauce)
-  {
-      //const regexName = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-      //const regexManufacturer = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-      //const regexDescription = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-      //const regexMainPepper = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-
-      let ret = true;
-    
-      //Name
-      if (sauce.Name.trim() == '')
-      {
-          ret = false;
-      }
-      //Manufacturer
-      if (!sauce.Manufacturer.trim() == '')
-      {
-          ret = false;
-      }
-      //Description
-      if (sauce.Description.length <= 5)
-      {
-          ret = false;
-      }
-      //MainPepper
-      if (!sauce.MainPepper.trim() == '')
-      {
-          ret = false;
-      }
-
-      return ret;
-  }
-
-  if (checkSauceData(sauce))
+  
+  if (checkSauceData(sauce) == true)
   {
       sauce.save()
       .then(() => { res.status(201).json({message: 'Objet enregistré !'})})
@@ -88,41 +88,6 @@ exports.modifySauce = (req, res, next) => {
   Sauce.findOne({_id: req.params.id})
       .then((sauce) => {
 
-          function checkSauceData(sauce)
-          {
-              
-              //const regexName = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-              //const regexManufacturer = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-              //const regexDescription = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-              //const regexMainPepper = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-        
-              let ret = true;
-            
-              //Name
-              if (sauce.Name.trim() == '')
-              {
-                  ret = false;
-              }
-              //Manufacturer
-              if (!sauce.Manufacturer.trim() == '')
-              {
-                  ret = false;
-              }
-              //Description
-              if (sauce.Description.length <= 5)
-              {
-                  ret = false;
-              }
-              //MainPepper
-              //if (!regexMainPepper.test(sauce.MainPepper))
-              if (!sauce.MainPepper.trim() == '')
-              {
-                  ret = false;
-              }
-        
-              return ret;
-          }
-    
           if (sauce.userId != req.auth.userId) {
             res.status(401).json({ message : 'Not authorized'});
           } else {
