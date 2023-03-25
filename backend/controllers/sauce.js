@@ -10,6 +10,8 @@ function checkSauceData(sauce)
     //const regexMainPepper = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
 
     let ret = true;
+
+    console.log(sauce);
   
     /*
     //Name
@@ -169,7 +171,7 @@ exports.like = (req, res, next) => {
                   {usersDisliked: sauce.usersDisliked.push(req.params.userId)})
                 
                 .then(() => res.status(200).json({message : 'Disliked!'}))
-                .catch(error => res.status(401).json({ error })); 
+                .catch(error => res.status(401).json({ error }));    
                 break;
 
               case 0:
