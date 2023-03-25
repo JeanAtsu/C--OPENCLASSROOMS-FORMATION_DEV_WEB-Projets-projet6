@@ -169,7 +169,7 @@ exports.like = (req, res, next) => {
                   {usersDisliked: sauce.usersDisliked.push(req.params.userId)})
                 
                 .then(() => res.status(200).json({message : 'Disliked!'}))
-                .catch(error => res.status(401).json({ error }));    
+                .catch(error => res.status(401).json({ error })); 
                 break;
 
               case 0:
