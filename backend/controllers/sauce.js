@@ -179,7 +179,7 @@ exports.like = (req, res, next) => {
                   {dislikes : sauce.dislikes -1}
                  )
 
-                .then(() => res.status(200).json({message : 'No like'}))
+                .then(() => res.status(200).json({message : 'No like!'}))
                 .catch(error => res.status(401).json({ error }));   
                 break;
                 
