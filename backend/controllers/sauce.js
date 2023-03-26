@@ -4,40 +4,64 @@ const fs = require('fs');
 
 function checkSauceData(sauce)
 {   
-  
-      let name = sauce.name.trim();
-      let manufacturer = sauce.manufacturer.trim();
-      let mainPepper = sauce.mainPepper.trim();
-      let description = sauce.description.trim();
-
+      
         /*
       const regexName = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
       const regexManufacturer = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
       const regexEmail = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
       const regexMainPepper = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\s][a-z]+)*$/gm;
       */
+
+      let name_ = sauce.name.trim();
+      let manufacturer_ = sauce.manufacturer.trim();
+      let mainPepper_ = sauce.mainPepper.trim();
+      let description_ = sauce.description.trim();
+
       let ret = true;
   
       //Name
-      if (!name.length > 2)
+      if (name_ == '')
       {
           ret = false;
+      }
+      else
+      {
+        ret = true;
       }
       //Manufacturer
-      if (!manufacturer.length > 2)
+      if (manufacturer_ == '')
       {
           ret = false;
+      }
+      else
+      {
+        ret = true;
       }
       //MainPepper
-      if (!mainPepper.length > 2)
+      if (mainPepper_ == '')
       {
           ret = false;
+      }
+      else
+      {
+        ret = true;
       }
       //Description
-      if (!description.length > 2)
+      if (description_ == '')
       {
           ret = false;
       }
+      else
+      {
+        ret = true;
+      }
+
+      console.log(name_);
+      console.log(manufacturer_);
+      console.log(mainPepper_);
+      console.log(description_);
+
+      console.log(ret);
       
       return ret;
 }
@@ -62,7 +86,16 @@ exports.createSauce = (req, res, next) => {
   }
   else
   {
-    res.status(400).json({ error });
+    //res.status(400).json({ error });
+    Sauce.updateOne({ _id: req.params.id}, 
+      { ...sauceObject, _id: req.params.id},
+      { name: sauce.name },
+      { manufacturer: sauce.manufacturer },
+      { mainPepper: sauce.mainPepper },
+      { description: sauce.description}
+      )
+      .then(() => res.status(200).json({message : 'Data format!'}))
+      .catch(error => res.status(401).json({ error }));
   }
   
 };
@@ -106,7 +139,15 @@ exports.modifySauce = (req, res, next) => {
               }
               else
               {
-                res.status(400).json({ error });
+                Sauce.updateOne({ _id: req.params.id}, 
+                  { ...sauceObject, _id: req.params.id},
+                  { name: sauce.name },
+                  { manufacturer: sauce.manufacturer },
+                  { mainPepper: sauce.mainPepper },
+                  { description: sauce.description}
+                  )
+                  .then(() => res.status(200).json({message : 'Data format!'}))
+                  .catch(error => res.status(401).json({ error }));
               }
           }           
       })
