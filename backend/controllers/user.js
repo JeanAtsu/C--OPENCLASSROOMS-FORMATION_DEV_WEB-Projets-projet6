@@ -18,12 +18,14 @@ exports.signup = (req, res, next) => {
         const regexEmail = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
 
         let ret = true;
-        
+
+        /*    
         //email
         if (!regexEmail.test(user.email))
         {
             ret = false;
         }
+        */
 
         return ret;
     }

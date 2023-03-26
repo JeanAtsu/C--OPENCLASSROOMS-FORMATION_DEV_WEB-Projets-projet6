@@ -3,40 +3,37 @@ const Sauce = require('../models/Sauce');
 const fs = require('fs');
 
 function checkSauceData(sauce)
-{
-    //const regexName = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-    //const regexManufacturer = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-    //const regexDescription = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-    //const regexMainPepper = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-
-    let ret = true;
-
-    console.log(sauce);
+{   
   
-    /*
-    //Name
-    if (sauce.Name == "")
-    {
-        ret = false;
-    }
-    //Manufacturer
-    if (sauce.Manufacturer == "")
-    {
-        ret = false;
-    }
-    //Description
-    if (sauce.Description.length <= 5)
-    {
-        ret = false;
-    }
-    //MainPepper
-    if (sauce.MainPepper == "")
-    {
-        ret = false;
-    }
-    */
-    
-    return ret;
+      let name = sauce.name.trim();
+      let manufacturer = sauce.manufacturer.trim();
+      let mainPepper = sauce.mainPepper.trim();
+      let description = sauce.description.trim();
+
+      let ret = true;
+  
+      //Name
+      if (!name.length > 2)
+      {
+          ret = false;
+      }
+      //Manufacturer
+      if (!manufacturer.length > 2)
+      {
+          ret = false;
+      }
+      //MainPepper
+      if (!mainPepper.length > 2)
+      {
+          ret = false;
+      }
+      //Description
+      if (!description.length > 2)
+      {
+          ret = false;
+      }
+      
+      return ret;
 }
 
 //Create sauce
@@ -55,10 +52,13 @@ exports.createSauce = (req, res, next) => {
       sauce.save()
       .then(() => { res.status(201).json({message: 'Objet enregistré !'})})
       .catch(error => { res.status(400).json( { error })})
+
   }
-  else{
-    res.status(304).json({ message : 'Data format error !'});
+  else
+  {
+    res.status(400).json({ error });
   }
+  
 };
 
 //Get a sauce
@@ -92,15 +92,16 @@ exports.modifySauce = (req, res, next) => {
           if (sauce.userId != req.auth.userId) {
             res.status(401).json({ message : 'Not authorized'});
           } else {
-            if (checkSauceData(sauce))
-            {
-                Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
-                .then(() => res.status(200).json({message : 'Objet modifié!'}))
-                .catch(error => res.status(401).json({ error }));
-            }
-            else{
-              res.status(304).json({ message : 'Data format error !'});
-            }
+              if (checkSauceData(sauce))
+              {
+                  Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
+                  .then(() => res.status(200).json({message : 'Objet modifié!'}))
+                  .catch(error => res.status(401).json({ error }));
+              }
+              else
+              {
+                res.status(400).json({ error });
+              }
           }           
       })
       .catch((error) => {
@@ -113,7 +114,7 @@ exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id})
       .then(sauce => {
           if (sauce.userId != req.auth.userId) {
-              res.status(401).json({message: 'Not authorized'});
+              res.status(401).json({message: 'Not autorisé'});
           } else {
               const filename = sauce.imageUrl.split('/images/')[1];
               fs.unlink(`images/${filename}`, () => {
@@ -178,9 +179,8 @@ exports.like = (req, res, next) => {
                 // No like
                 Sauce.updateOne({_id : req.params.id},
                   {likes : sauce.likes -1},
-                  {dislikes : sauce.dislikes -1}
+                  {dislikes : sauce.dislikes -1}           
                  )
-
                 .then(() => res.status(200).json({message : 'No like!'}))
                 .catch(error => res.status(401).json({ error }));   
                 break;
