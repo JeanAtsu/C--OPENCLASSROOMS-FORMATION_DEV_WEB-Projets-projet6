@@ -2,6 +2,7 @@
 const Sauce = require('../models/Sauce');
 const fs = require('fs');
 
+//check data format
 function checkSauceData(sauce)
 {   
       
@@ -194,6 +195,11 @@ exports.getAllSauce = (req, res, next) => {
 //Like
 exports.like = (req, res, next) => {
 
+      const sauceObject = req.file ? {
+        ...JSON.parse(req.body.sauce),
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    } : { ...req.body };
+
     Sauce.findOne({_id: req.params.id})
     .then((sauce) => {
         if (sauce.userId == req.params.userId) 
@@ -204,35 +210,33 @@ exports.like = (req, res, next) => {
         {          
             switch(req.body.like) {
 
-              case 1:
-                // like
-                Sauce.updateOne({_id : req.params.id}, {likes : sauce.likes + 1}, 
+              case 1:  // like
+               
+                Sauce.updateOne({_id : req.params.id}, 
+                  {likes : sauce.likes + 1}, 
                   {usersLiked : sauce.usersLiked.push(req.params.userId)})
                             
                   .then(() => res.status(200).json({message : 'Liked!'}))
                   .catch(error => res.status(401).json({ error }));   
                 break;
                
-              case -1:
-                // dislike
-                Sauce.updateOne({_id : req.params.id}, {dislikes : sauce.dislikes +1},
+              case -1: // dislike
+                
+                Sauce.updateOne({_id : req.params.id}, 
+                  {dislikes : sauce.dislikes +1},
                   {usersDisliked: sauce.usersDisliked.push(req.params.userId)})
                 
                 .then(() => res.status(200).json({message : 'Disliked!'}))
                 .catch(error => res.status(401).json({ error }));    
                 break;
-
-              case 0:
-                // No like
+                
+              default:
                 Sauce.updateOne({_id : req.params.id},
                   {likes : sauce.likes -1},
-                  {dislikes : sauce.dislikes -1}           
+                  {dislikes : sauce.dislikes -1}
                  )
                 .then(() => res.status(200).json({message : 'No like!'}))
                 .catch(error => res.status(401).json({ error }));   
-                break;
-                
-              default:
                 break;
             }  
         }
