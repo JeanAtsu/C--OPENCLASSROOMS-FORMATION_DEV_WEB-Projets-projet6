@@ -4,8 +4,7 @@ const fs = require('fs');
 
 //check data format
 function checkSauceData(sauce)
-{   
-      
+{     
       let name_ = sauce.name.trim();
       let manufacturer_ = sauce.manufacturer.trim();
       let mainPepper_ = sauce.mainPepper.trim();
@@ -36,40 +35,8 @@ function checkSauceData(sauce)
       {
           ret = false;
       }
-      /*
-      console.log(name_);
-      console.log(manufacturer_);
-      console.log(mainPepper_);
-      console.log(description_);
 
-      console.log(ret);*/
-      
       return ret;
-}
-
-// user liked
-function userLiked(userId, sauce)
-{   
-    let ret = false;
-
-    if (sauce.usersLiked.id(userId) != null)
-    {
-        ret = true;
-    }
-    
-    return ret;
-}
-// user disliked
-function userDisliked(userId, sauce)
-{   
-    let ret = false;
-
-    if (sauce.usersDisliked.id(userId) != null)
-    {
-        ret = true;
-    }
-    
-    return ret;
 }
 
 //Create sauce
@@ -191,8 +158,6 @@ exports.like = (req, res, next) => {
         } 
         else 
         {        
-            console.log('like : ' + req.body.like);
-
             switch(req.body.like) {
 
               case 1:  // like
@@ -211,24 +176,23 @@ exports.like = (req, res, next) => {
                
               case -1: // dislike
               
-                  Sauce.updateOne(
-                    {_id : req.params.id}, 
-                    {
-                        $inc: {dislikes:  + 1 },
-                        $push: {usersDisliked: req.body.userId}                     
-                    })
-                  
-                  .then(() => res.status(200).json({message : 'Disliked!'}))
-                  .catch(error => res.status(401).json({ error }));    
-               
-                break;                
+                Sauce.updateOne(
+                  {_id : req.params.id}, 
+                  {
+                      $inc: {dislikes:  + 1 },
+                      $push: {usersDisliked: req.body.userId}                     
+                  })
+                
+                .then(() => res.status(200).json({message : 'Disliked!'}))
+                .catch(error => res.status(401).json({ error }));    
+              
+              break;                
                                     
               case 0: // No like
                   
                   let liked = sauce.usersLiked.find(e => e === req.body.userId);
                   let disliked = sauce.usersDisliked.find(e => e === req.body.userId);
 
-                 console.log('liked: '+liked, 'disliked: '+disliked);
                  if (liked != null)
                  {   
                     Sauce.updateOne(
