@@ -6,13 +6,6 @@ const fs = require('fs');
 function checkSauceData(sauce)
 {   
       
-        /*
-      const regexName = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-      const regexManufacturer = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\-\s][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/gm;
-      const regexEmail = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
-      const regexMainPepper = /^(?=.{2,50}$)[A-Za-zÀ-ÖØ-öø-ÿ]+(?:['_.\s][a-z]+)*$/gm;
-      */
-
       let name_ = sauce.name.trim();
       let manufacturer_ = sauce.manufacturer.trim();
       let mainPepper_ = sauce.mainPepper.trim();
@@ -25,46 +18,58 @@ function checkSauceData(sauce)
       {
           ret = false;
       }
-      else
-      {
-        ret = true;
-      }
+     
       //Manufacturer
       if (manufacturer_ == '')
       {
           ret = false;
       }
-      else
-      {
-        ret = true;
-      }
+      
       //MainPepper
       if (mainPepper_ == '')
       {
           ret = false;
       }
-      else
-      {
-        ret = true;
-      }
+      
       //Description
       if (description_ == '')
       {
           ret = false;
       }
-      else
-      {
-        ret = true;
-      }
-
+      /*
       console.log(name_);
       console.log(manufacturer_);
       console.log(mainPepper_);
       console.log(description_);
 
-      console.log(ret);
+      console.log(ret);*/
       
       return ret;
+}
+
+// user liked
+function userLiked(userId, sauce)
+{   
+    let ret = false;
+
+    if (sauce.usersLiked.id(userId) != null)
+    {
+        ret = true;
+    }
+    
+    return ret;
+}
+// user disliked
+function userDisliked(userId, sauce)
+{   
+    let ret = false;
+
+    if (sauce.usersDisliked.id(userId) != null)
+    {
+        ret = true;
+    }
+    
+    return ret;
 }
 
 //Create sauce
@@ -87,16 +92,7 @@ exports.createSauce = (req, res, next) => {
   }
   else
   {
-    //res.status(400).json({ error });
-    Sauce.updateOne({ _id: req.params.id}, 
-      { ...sauceObject, _id: req.params.id},
-      { name: sauce.name },
-      { manufacturer: sauce.manufacturer },
-      { mainPepper: sauce.mainPepper },
-      { description: sauce.description}
-      )
-      .then(() => res.status(200).json({message : 'Data format!'}))
-      .catch(error => res.status(401).json({ error }));
+    res.status(400).json({ message: 'format error !' });
   }
   
 };
@@ -140,15 +136,7 @@ exports.modifySauce = (req, res, next) => {
               }
               else
               {
-                Sauce.updateOne({ _id: req.params.id}, 
-                  { ...sauceObject, _id: req.params.id},
-                  { name: sauce.name },
-                  { manufacturer: sauce.manufacturer },
-                  { mainPepper: sauce.mainPepper },
-                  { description: sauce.description}
-                  )
-                  .then(() => res.status(200).json({message : 'Data format!'}))
-                  .catch(error => res.status(401).json({ error }));
+                res.status(400).json({ message: 'format error !' });
               }
           }           
       })
@@ -194,12 +182,7 @@ exports.getAllSauce = (req, res, next) => {
 
 //Like
 exports.like = (req, res, next) => {
-
-      const sauceObject = req.file ? {
-        ...JSON.parse(req.body.sauce),
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...req.body };
-
+  
     Sauce.findOne({_id: req.params.id})
     .then((sauce) => {
         if (sauce.userId == req.params.userId) 
@@ -207,38 +190,73 @@ exports.like = (req, res, next) => {
             res.status(401).json({ message : 'Not authorized'});  
         } 
         else 
-        {          
+        {        
+            console.log('like : ' + req.body.like);
+
             switch(req.body.like) {
 
               case 1:  // like
-               
-                Sauce.updateOne({_id : req.params.id}, 
-                  {likes : sauce.likes + 1}, 
-                  {usersLiked : sauce.usersLiked.push(req.params.userId)})
-                            
+                 
+                Sauce.updateOne(
+                  {_id : req.params.id}, 
+                  {  
+                      $inc: {likes: + 1 },
+                      $push: {usersLiked: req.body.userId}
+                  })
+            
                   .then(() => res.status(200).json({message : 'Liked!'}))
-                  .catch(error => res.status(401).json({ error }));   
-                break;
+                  .catch(error => res.status(401).json({ error }));  
+           
+              break;
                
               case -1: // dislike
-                
-                Sauce.updateOne({_id : req.params.id}, 
-                  {dislikes : sauce.dislikes +1},
-                  {usersDisliked: sauce.usersDisliked.push(req.params.userId)})
-                
-                .then(() => res.status(200).json({message : 'Disliked!'}))
-                .catch(error => res.status(401).json({ error }));    
-                break;
-                
-              default:
-                Sauce.updateOne({_id : req.params.id},
-                  {likes : sauce.likes -1},
-                  {dislikes : sauce.dislikes -1}
-                 )
-                .then(() => res.status(200).json({message : 'No like!'}))
-                .catch(error => res.status(401).json({ error }));   
-                break;
-            }  
+              
+                  Sauce.updateOne(
+                    {_id : req.params.id}, 
+                    {
+                        $inc: {dislikes:  + 1 },
+                        $push: {usersDisliked: req.body.userId}                     
+                    })
+                  
+                  .then(() => res.status(200).json({message : 'Disliked!'}))
+                  .catch(error => res.status(401).json({ error }));    
+               
+                break;                
+                                    
+              case 0: // No like
+                  
+                  let liked = sauce.usersLiked.find(e => e === req.body.userId);
+                  let disliked = sauce.usersDisliked.find(e => e === req.body.userId);
+
+                 console.log('liked: '+liked, 'disliked: '+disliked);
+                 if (liked != null)
+                 {   
+                    Sauce.updateOne(
+                    {_id : req.params.id},
+                    {             
+                        $inc: {likes: -1},
+                        $pull: {usersDisliked: req.body.userId}                    
+                    })
+                    .then(() => res.status(200).json({message : 'No like or dislike!'}))
+                    .catch(error => res.status(401).json({ error }));    
+                 }    
+                 if (disliked != null)
+                 {   
+                    Sauce.updateOne(
+                    {_id : req.params.id},
+                    {             
+                        $inc: {dislikes: -1},
+                        $pull: {usersLiked: req.body.userId}                    
+                    })
+                    .then(() => res.status(200).json({message : 'No like or dislike!'}))
+                    .catch(error => res.status(401).json({ error }));    
+                 }  
+                                
+                break; 
+              
+            default:  
+              break;
+          }  
         }
     })
     .catch((error) => {

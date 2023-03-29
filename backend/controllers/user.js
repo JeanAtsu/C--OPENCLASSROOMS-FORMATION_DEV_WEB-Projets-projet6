@@ -3,6 +3,23 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+function checkUserData(user)
+{
+    const regexEmail = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
+    let ret = true;
+    
+    //email
+    if (!regexEmail.test(user.email))
+    {
+        ret = false;
+    }
+    
+    console.log(ret, user);
+
+    return ret;
+}
+
+
 //Inscription
 exports.signup = (req, res, next) => {
   
@@ -13,27 +30,18 @@ exports.signup = (req, res, next) => {
         password: hash
       });
 
-    function checkUserData(user)
+    
+    if (checkUserData(user))
     {
-        const regexEmail = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
-
-        let ret = true;
-
-        /*    
-        //email
-        if (!regexEmail.test(user.email))
-        {
-            ret = false;
-        }
-        */
-
-        return ret;
-    }
-
-    if (checkUserData())
-      user.save()
+        user.save()
         .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
         .catch(error => res.status(400).json({ error }));
+
+    }
+    else{
+        res.status(400).json({ message: 'Non enregistré  !' });
+    }
+      
     })
     .catch(error => res.status(500).json({ error }));
 };
