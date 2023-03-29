@@ -235,7 +235,7 @@ exports.like = (req, res, next) => {
                     {_id : req.params.id},
                     {             
                         $inc: {likes: -1},
-                        $pull: {usersDisliked: req.body.userId}                    
+                        $pull: {usersLiked: req.body.userId}                    
                     })
                     .then(() => res.status(200).json({message : 'No like or dislike!'}))
                     .catch(error => res.status(401).json({ error }));    
@@ -246,7 +246,7 @@ exports.like = (req, res, next) => {
                     {_id : req.params.id},
                     {             
                         $inc: {dislikes: -1},
-                        $pull: {usersLiked: req.body.userId}                    
+                        $pull: {usersDisliked: req.body.userId}                    
                     })
                     .then(() => res.status(200).json({message : 'No like or dislike!'}))
                     .catch(error => res.status(401).json({ error }));    
