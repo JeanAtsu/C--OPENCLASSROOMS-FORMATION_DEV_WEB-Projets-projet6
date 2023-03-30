@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 function checkUserData(user)
 {
-    const regexEmail = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
+    const regexEmail = /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;  
     let ret = true;
     
     //email
@@ -29,7 +29,6 @@ exports.signup = (req, res, next) => {
         email: req.body.email,
         password: hash
       });
-
     
     if (checkUserData(user))
     {

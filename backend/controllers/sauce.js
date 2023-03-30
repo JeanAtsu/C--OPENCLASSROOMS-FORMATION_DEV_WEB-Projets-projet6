@@ -216,8 +216,7 @@ exports.like = (req, res, next) => {
                     .catch(error => res.status(401).json({ error }));    
                  }  
                                 
-                break; 
-              
+                break;            
             default:  
               break;
           }  
@@ -226,7 +225,6 @@ exports.like = (req, res, next) => {
     .catch((error) => {
         res.status(400).json({ error });
     });
-    
 };
 
 
