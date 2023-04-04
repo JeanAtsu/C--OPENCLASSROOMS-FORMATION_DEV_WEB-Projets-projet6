@@ -159,7 +159,6 @@ exports.like = (req, res, next) => {
         else 
         {        
             switch(req.body.like) {
-
               case 1:  // like
                  
                 Sauce.updateOne(
