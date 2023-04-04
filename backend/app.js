@@ -6,14 +6,14 @@ const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
 const path = require('path');
 
-//const dotenv = require('dotenv').config();
+const dotenv = require('dotenv').config();
 
 const app = express();   
-app.use(express.json()); //Pour exposer le body
+app.use(express.json()); //expose le body
 
 
-//DOTENV - DB Security
-require('dotenv').config();
+//DB Security
+process.config = dotenv;
 const uri = process.env.MONGO_URI;
 
 mongoose.connect(uri,
