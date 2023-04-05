@@ -9,10 +9,11 @@ const path = require('path');
 const dotenv = require('dotenv').config();
 
 const app = express();   
-app.use(express.json()); //expose le body
 
+//expose le body
+app.use(express.json()); 
 
-//DB Secure - dotenv
+//MongoDB - dotenv secure
 const uri = process.env.MONGO_URI;
 
 mongoose.connect(uri,
@@ -33,7 +34,7 @@ app.use('/api/auth', userRoutes);
 app.use('/api/sauces', sauceRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-// Express secure - helmet
+// Express app - helmet secure
 app.use(helmet());
 
 module.exports = app;
